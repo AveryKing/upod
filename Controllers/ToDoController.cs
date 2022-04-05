@@ -23,51 +23,51 @@ namespace ToDoApi.Controllers
 
         // GET: api/ToDo
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ToDoItem>>> GetTodoItems()
+        public async Task<ActionResult<IEnumerable<ToDoItemDTO>>> GetTodoItems()
         {
-            return await _context.TodoItems.ToListAsync();
+            return await _context.ToDoItems.Select(x => ItemToDTO(x)).ToListAsync();
         }
 
         // GET: api/ToDo/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ToDoItem>> GetToDoItem(long id)
+        public async Task<ActionResult<ToDoItemDTO>> GetToDoItem(long id)
         {
-            var toDoItem = await _context.TodoItems.FindAsync(id);
+            var toDoItem = await _context.ToDoItems.FindAsync(id);
 
             if (toDoItem == null)
             {
                 return NotFound();
             }
 
-            return toDoItem;
+            return ItemToDTO(toDoItem);
         }
 
         // PUT: api/ToDo/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutToDoItem(long id, ToDoItem toDoItem)
+        public async Task<IActionResult> UpdateToDoItem(long id, ToDoItemDTO toDoItemDTO)
         {
-            if (id != toDoItem.Id)
+            if (id != toDoItemDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(toDoItem).State = EntityState.Modified;
+            var toDoItem = await _context.ToDoItems.FindAsync(id);
+            if (toDoItem == null)
+            {
+                return NotFound();
+            }
+
+            toDoItem.Name = toDoItemDTO.Name;
+            toDoItem.IsComplete = toDoItemDTO.IsComplete;
 
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException) when (!ToDoItemExists(id))
             {
-                if (!ToDoItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -76,25 +76,32 @@ namespace ToDoApi.Controllers
         // POST: api/ToDo
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ToDoItem>> PostToDoItem(ToDoItem toDoItem)
+        public async Task<ActionResult<ToDoItemDTO>> CreateToDoItem(ToDoItemDTO toDoItemDTO)
         {
-            _context.TodoItems.Add(toDoItem);
+            var toDoItem = new ToDoItem
+            {
+                IsComplete = toDoItemDTO.IsComplete,
+                Name = toDoItemDTO.Name
+            };
+
+            _context.ToDoItems.Add(toDoItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetToDoItem), new { id = toDoItem.Id }, toDoItem);
+            return CreatedAtAction(nameof(GetToDoItem),
+                new {id = toDoItem.Id}, ItemToDTO(toDoItem));
         }
 
         // DELETE: api/ToDo/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteToDoItem(long id)
         {
-            var toDoItem = await _context.TodoItems.FindAsync(id);
+            var toDoItem = await _context.ToDoItems.FindAsync(id);
             if (toDoItem == null)
             {
                 return NotFound();
             }
 
-            _context.TodoItems.Remove(toDoItem);
+            _context.ToDoItems.Remove(toDoItem);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -102,7 +109,15 @@ namespace ToDoApi.Controllers
 
         private bool ToDoItemExists(long id)
         {
-            return _context.TodoItems.Any(e => e.Id == id);
+            return _context.ToDoItems.Any(e => e.Id == id);
         }
+
+        private static ToDoItemDTO ItemToDTO(ToDoItem toDoItem) =>
+            new ToDoItemDTO
+            {
+                Id = toDoItem.Id,
+                Name = toDoItem.Name,
+                IsComplete = toDoItem.IsComplete
+            };
     }
 }
