@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+
 using ToDoApi.Models;
-using ToDoApi.Tasks;
+using ToDoApi.Services;
+using ToDoApi.Settings;
 
 var myAllowSpecificOrigins = "myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,11 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.Configure<TasksDatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+builder.Services.Configure<UsersDatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+
 builder.Services.AddSingleton<TasksService>();
+builder.Services.AddSingleton<UsersService>();
+
 builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
 
 var app = builder.Build();

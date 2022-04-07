@@ -2,7 +2,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using ToDoApi.Models;
 
-namespace ToDoApi.Tasks;
+namespace ToDoApi.Services;
 
 public class TasksService
 {
@@ -32,12 +32,12 @@ public class TasksService
     
     public async Task UpdateAsync(string id, ToDoItem task)
     {
-        var updateResult = await _tasksCollection.ReplaceOneAsync(item => item.Id == id, task);
+        await _tasksCollection.ReplaceOneAsync(item => item.Id == id, task);
     }
     
     public async Task DeleteAsync(string id)
     {
-        var deleteResult = await _tasksCollection.DeleteOneAsync(item => item.Id == id);
+        await _tasksCollection.DeleteOneAsync(item => item.Id == id);
     }
     
 }

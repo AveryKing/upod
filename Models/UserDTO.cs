@@ -2,6 +2,7 @@ namespace ToDoApi.Models;
 
 public class UserDTO
 {
-    public string Username { get; set; }
-    public long Id { get; set; }
+    
+    public string? Id { get; set; }
+    public string? Username { get; set; }
 }

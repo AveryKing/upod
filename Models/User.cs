@@ -1,7 +1,13 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace ToDoApi.Models;
 
 public class User
 {
-    public string Username { get; set; }
-    public long Id { get; set; }
+    [BsonRepresentation((BsonType.ObjectId))]
+    [BsonId]
+    public string? Id { get; set; }
+    public string? Username { get; set; }
+    
 }
