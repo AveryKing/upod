@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using ToDoApi.Models;
@@ -7,6 +8,7 @@ namespace ToDoApi.Controllers;
 
     [EnableCors("myAllowSpecificOrigins")]
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -94,4 +96,13 @@ namespace ToDoApi.Controllers;
                 Id = user.Id,
                 Username = user.Username,
             };
+
+        [AllowAnonymous]
+        [Route("login")]
+        [HttpPost]
+        public ActionResult Login([FromBody] LoginCredentials credentials) {
+            var token = _usersService.Authenticate(credentials);
+            return token.Result is null ? Unauthorized() : Ok(new{token=token.Result});
+        }   
+
     }

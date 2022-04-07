@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.Configure<TasksDatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
-builder.Services.Configure<UsersDatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+builder.Services.Configure<UsersSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 builder.Services.AddSingleton<TasksService>();
 builder.Services.AddSingleton<UsersService>();
 
@@ -30,7 +30,7 @@ builder.Services.AddAuthentication(x =>
         x.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(ASCII.GetBytes(builder.Configuration.GetSection("JwtKey").Value)),
+            IssuerSigningKey = new SymmetricSecurityKey(ASCII.GetBytes("chrbei8h9f3iuonf3ufdoujoidjowdoidjoicnwdwewdrw")),
             ValidateIssuer = false,
             ValidateAudience = false
         };
