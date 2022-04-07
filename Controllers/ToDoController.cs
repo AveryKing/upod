@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoApi.Models;
+using ToDoApi.Tasks;
 
 namespace ToDoApi.Controllers
 {
@@ -16,61 +17,55 @@ namespace ToDoApi.Controllers
     [ApiController]
     public class ToDoController : ControllerBase
     {
-        private readonly ToDoContext _context;
+        private readonly TasksService _tasksService;
 
-        public ToDoController(ToDoContext context)
+        public ToDoController(TasksService tasksService)
         {
-            _context = context;
+            _tasksService = tasksService;
         }
 
         // GET: api/ToDo
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ToDoItemDTO>>> GetTodoItems()
+        public async Task<ActionResult<List<ToDoItemDTO>>> GetTodoItemsAsync()
         {
-            return await _context.ToDoItems.Select(x => ItemToDTO(x)).ToListAsync();
+            var tasks = await _tasksService.GetAsync();
+            return tasks.Select(x => ItemToDto(x)).ToList();
         }
 
         // GET: api/ToDo/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ToDoItemDTO>> GetToDoItem(long id)
+        public async Task<ActionResult<ToDoItemDTO>> GetToDoItemAsync(string id)
         {
-            var toDoItem = await _context.ToDoItems.FindAsync(id);
+            var toDoItem = await _tasksService.GetAsync(id);
 
-            if (toDoItem == null)
+            if (toDoItem is null)
             {
                 return NotFound();
             }
 
-            return ItemToDTO(toDoItem);
+            return ItemToDto(toDoItem);
         }
 
         // PUT: api/ToDo/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateToDoItem(long id, ToDoItemDTO toDoItemDTO)
+        public async Task<IActionResult> UpdateToDoItemAsync(string id, ToDoItemDTO toDoItemDto)
         {
-            if (id != toDoItemDTO.Id)
+            if (id != toDoItemDto.Id)
             {
                 return BadRequest();
             }
 
-            var toDoItem = await _context.ToDoItems.FindAsync(id);
-            if (toDoItem == null)
+            var toDoItem = await _tasksService.GetAsync(id);
+            if (toDoItem is null)
             {
                 return NotFound();
             }
 
-            toDoItem.Name = toDoItemDTO.Name;
-            toDoItem.IsComplete = toDoItemDTO.IsComplete;
+            toDoItem.Name = toDoItemDto.Name;
+            toDoItem.IsComplete = toDoItemDto.IsComplete;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException) when (!ToDoItemExists(id))
-            {
-                return NotFound();
-            }
+            await _tasksService.UpdateAsync(id, toDoItem);
 
             return NoContent();
         }
@@ -78,43 +73,42 @@ namespace ToDoApi.Controllers
         // POST: api/ToDo
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ToDoItemDTO>> CreateToDoItem(ToDoItemDTO toDoItemDTO)
+        public async Task<ActionResult<ToDoItemDTO>> CreateToDoItemAsync(ToDoItemDTO toDoItemDto)
         {
             var toDoItem = new ToDoItem
             {
-                IsComplete = toDoItemDTO.IsComplete,
-                Name = toDoItemDTO.Name
+                IsComplete = toDoItemDto.IsComplete,
+                Name = toDoItemDto.Name
             };
 
-            _context.ToDoItems.Add(toDoItem);
-            await _context.SaveChangesAsync();
+          await _tasksService.CreateAsync(toDoItem);
 
-            return CreatedAtAction(nameof(GetToDoItem),
-                new {id = toDoItem.Id}, ItemToDTO(toDoItem));
+          // ReSharper disable once Mvc.ActionNotResolved
+          return CreatedAtAction(nameof(GetToDoItemAsync),
+                new {id = toDoItem.Id}, ItemToDto(toDoItem));
         }
 
         // DELETE: api/ToDo/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteToDoItem(long id)
+        public async Task<IActionResult> DeleteToDoItem(string id)
         {
-            var toDoItem = await _context.ToDoItems.FindAsync(id);
-            if (toDoItem == null)
+            var toDoItem = await _tasksService.GetAsync(id);
+            if (toDoItem is null)
             {
                 return NotFound();
             }
 
-            _context.ToDoItems.Remove(toDoItem);
-            await _context.SaveChangesAsync();
-
+            await _tasksService.DeleteAsync(id);
             return NoContent();
         }
 
-        private bool ToDoItemExists(long id)
+        private async Task<bool> ToDoItemExistsAsync(string id)
         {
-            return _context.ToDoItems.Any(e => e.Id == id);
+            var tasks = await _tasksService.GetAsync();
+            return tasks.Any(x => x.Id == id);
         }
 
-        private static ToDoItemDTO ItemToDTO(ToDoItem toDoItem) =>
+        private static ToDoItemDTO ItemToDto(ToDoItem toDoItem) =>
             new ToDoItemDTO
             {
                 Id = toDoItem.Id,

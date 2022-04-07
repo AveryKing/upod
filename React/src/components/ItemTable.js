@@ -3,7 +3,9 @@ import { DataGrid } from '@mui/x-data-grid';
 
 const columns = [
     { field: 'name', headerName: 'Task', width: 400 },
-    { field: 'isComplete', headerName: 'Completed', width: 400 },
+    { field: 'isComplete', headerName: 'Completed', width: 400,
+        valueGetter: (params) =>
+            `${params.row.isComplete ? 'Yes' : 'No'}`},
 ];
 
 export default function ItemTable({list}) {
