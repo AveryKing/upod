@@ -1,33 +1,73 @@
 import React, {useEffect, useState} from "react";
-import {Box, Button, Checkbox, TextField, Typography} from "@mui/material";
-import ToDoItem from "./components/ToDoItem";
-import ItemTable from "./components/ItemTable";
+import {Button, ChakraProvider, Flex, Input, Stack, Text} from "@chakra-ui/react";
 
-const API_URL = 'https://localhost:7135/api/todo/';
+const API_URL = 'https://localhost:7135/api';
+
 function App() {
-  const [list, setList] = useState([]);
+  //  const [list, setList] = useState([]);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(false);
 
-  useEffect(() => {
-    fetch(API_URL)
-        .then(res => res.json())
-        .then(data => {
-          setList(data);
+    const doLogin = () => {
+        fetch(`${API_URL}/users/login`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, password})
         })
-  },[setList]);
+            .then(res => res.json())
+            .then(data => {
+                if (data.token) {
+                    setError(false)
+                } else {
+                    setError(true)
+                }
 
-  return (
-   <div style={{textAlign:'center',marginTop:'10vh'}}>
-    <Typography variant='h5'>Task List</Typography>
-     <Typography variant='h6'>Enter an item below to add to the list</Typography>
-       <Box sx={{marginBottom:'30px',display:'flex',alignItems:'center',justifyContent:'center'}}>
-           <TextField color='secondary' id="outlined-basic" label="New Task" variant="standard" />
-           <Button color='secondary' sx={{marginLeft:'5px',marginTop:'20px'}}>Add</Button>
-       </Box>
+                console.log(data);
+            })
+    }
 
-       <ItemTable list={list} />
+    return (
+        <ChakraProvider>
+            <Flex justifyContent='center'>
+                <Stack textAlign='center'
+                       mt='25vh'
+                       spacing={5}>
 
-   </div>
-  );
+                    <Text
+                        fontWeight='semibold'
+                        fontSize='lg'>
+                        Please enter your login credentials
+                    </Text>
+                    {error && (
+                        <Text
+                            mt={-10}
+                            fontSize='sm'
+                            color='#FF0000'>
+                            The credentials you entered are invalid
+                        </Text>
+                    )}
+                    <Input
+                        onChange={(e) => setEmail(e.target.value)}
+                        variant='filled'
+                        placeholder='Email'/>
+
+                    <Input onChange={(e) => setPassword(e.target.value)}
+                           variant='filled'
+                           type="password"
+                           placeholder='Password'/>
+                    <Button onClick={doLogin}>Login</Button>
+                    <Button
+                        fontSize='sm'
+                        variant='link'>
+                        Don't yet have an account?
+                    </Button>
+                </Stack>
+
+            </Flex>
+        </ChakraProvider>
+
+    );
 }
 
 export default App;

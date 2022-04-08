@@ -6,9 +6,11 @@ using ToDoApi.Services;
 
 namespace ToDoApi.Controllers;
 
-    [EnableCors("myAllowSpecificOrigins")]
+    
     [Route("api/[controller]")]
     [Authorize]
+    [EnableCors("myAllowSpecificOrigins")]
+
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -57,7 +59,8 @@ namespace ToDoApi.Controllers;
         }
         
         [HttpPost]
-        public async Task<ActionResult<UserDto>> CreateUserAsync(UserDto userDto)
+        [AllowAnonymous]
+        public async Task<ActionResult<UserDto>> CreateUserAsync([FromBody] UserDto userDto)
         {
             var user = new User
             {
