@@ -53,10 +53,11 @@ public class UsersService
         string email = credentials.Email;
         string password = credentials.Password;
         var user = await _usersCollection.FindAsync(x => x.Email == email && x.Password == password);
-        if (user is null)
+        if (user.FirstOrDefault() is null)
         {
             return null;
         }
+
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenKey = Encoding.ASCII.GetBytes("chrbei8h9f3iuonf3ufdoujoidjowdoidjoicnwdwewdrw");
         var token = tokenHandler.CreateToken(new SecurityTokenDescriptor

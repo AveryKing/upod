@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: myAllowSpecificOrigins, b => b.WithOrigins("*", "http://localhost:3000"));
 });
 
-builder.Services.Configure<TasksDatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+builder.Services.Configure<TasksDbSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 builder.Services.Configure<UsersSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 builder.Services.AddSingleton<TasksService>();
 builder.Services.AddSingleton<UsersService>();

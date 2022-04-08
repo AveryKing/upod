@@ -1,6 +1,6 @@
-namespace ToDoApi.Models;
+namespace ToDoApi.Settings;
 
-public class TasksDatabaseSettings
+public class TasksDbSettings
 {
     public string ConnectionString { get; set; }
     public string DatabaseName { get; set; }

@@ -20,7 +20,7 @@ namespace ToDoApi.Controllers;
         }
         
         [HttpGet]
-        public async Task<ActionResult<List<UserDTO>>> GetUsersAsync()
+        public async Task<ActionResult<List<UserDto>>> GetUsersAsync()
         {
             var users = await _usersService.GetAsync();
             return users.Select(user => UserToDto(user)).ToList();
@@ -28,7 +28,7 @@ namespace ToDoApi.Controllers;
         
         
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDTO>> GetUserAsync(string id)
+        public async Task<ActionResult<UserDto>> GetUserAsync(string id)
         {
             var user = await _usersService.GetAsync(id);
 
@@ -36,7 +36,7 @@ namespace ToDoApi.Controllers;
         }
         
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUserAsync(string id, UserDTO userDto)
+        public async Task<IActionResult> UpdateUserAsync(string id, UserDto userDto)
         {
             if (id != userDto.Id)
             {
@@ -57,11 +57,13 @@ namespace ToDoApi.Controllers;
         }
         
         [HttpPost]
-        public async Task<ActionResult<UserDTO>> CreateUserAsync(UserDTO userDto)
+        public async Task<ActionResult<UserDto>> CreateUserAsync(UserDto userDto)
         {
             var user = new User
             {
-                Username = userDto.Username
+                Username = userDto.Username,
+                Email = userDto.Email,
+                Password = userDto.Password
             };
 
           await _usersService.CreateAsync(user);
@@ -90,8 +92,8 @@ namespace ToDoApi.Controllers;
             return users.Any(x => x.Id == id);
         }
 
-        private static UserDTO UserToDto(User user) =>
-            new UserDTO
+        private static UserDto UserToDto(User user) =>
+            new UserDto
             {
                 Id = user.Id,
                 Username = user.Username,

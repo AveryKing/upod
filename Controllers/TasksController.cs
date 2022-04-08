@@ -1,4 +1,5 @@
 #nullable disable
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using ToDoApi.Models;
@@ -6,21 +7,22 @@ using ToDoApi.Services;
 
 namespace ToDoApi.Controllers
 {
+    [Authorize]
     [EnableCors("myAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ToDoController : ControllerBase
+    public class TasksController : ControllerBase
     {
         private readonly TasksService _tasksService;
 
-        public ToDoController(TasksService tasksService)
+        public TasksController(TasksService tasksService)
         {
             _tasksService = tasksService;
         }
 
         // GET: api/ToDo
         [HttpGet]
-        public async Task<ActionResult<List<ToDoItemDTO>>> GetTodoItemsAsync()
+        public async Task<ActionResult<List<TaskItemDto>>> GetTodoItemsAsync()
         {
             var tasks = await _tasksService.GetAsync();
             return tasks.Select(x => ItemToDto(x)).ToList();
@@ -28,7 +30,7 @@ namespace ToDoApi.Controllers
 
         // GET: api/ToDo/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ToDoItemDTO>> GetToDoItemAsync(string id)
+        public async Task<ActionResult<TaskItemDto>> GetToDoItemAsync(string id)
         {
             var toDoItem = await _tasksService.GetAsync(id);
 
@@ -43,9 +45,9 @@ namespace ToDoApi.Controllers
         // PUT: api/ToDo/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateToDoItemAsync(string id, ToDoItemDTO toDoItemDto)
+        public async Task<IActionResult> UpdateToDoItemAsync(string id, TaskItemDto taskItemDto)
         {
-            if (id != toDoItemDto.Id)
+            if (id != taskItemDto.Id)
             {
                 return BadRequest();
             }
@@ -56,8 +58,8 @@ namespace ToDoApi.Controllers
                 return NotFound();
             }
 
-            toDoItem.Name = toDoItemDto.Name;
-            toDoItem.IsComplete = toDoItemDto.IsComplete;
+            toDoItem.Name = taskItemDto.Name;
+            toDoItem.IsComplete = taskItemDto.IsComplete;
 
             await _tasksService.UpdateAsync(id, toDoItem);
 
@@ -67,12 +69,12 @@ namespace ToDoApi.Controllers
         // POST: api/ToDo
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ToDoItemDTO>> CreateToDoItemAsync(ToDoItemDTO toDoItemDto)
+        public async Task<ActionResult<TaskItemDto>> CreateToDoItemAsync(TaskItemDto taskItemDto)
         {
-            var toDoItem = new ToDoItem
+            var toDoItem = new TaskItem
             {
-                IsComplete = toDoItemDto.IsComplete,
-                Name = toDoItemDto.Name
+                IsComplete = taskItemDto.IsComplete,
+                Name = taskItemDto.Name
             };
 
           await _tasksService.CreateAsync(toDoItem);
@@ -102,12 +104,12 @@ namespace ToDoApi.Controllers
             return tasks.Any(x => x.Id == id);
         }
 
-        private static ToDoItemDTO ItemToDto(ToDoItem toDoItem) =>
-            new ToDoItemDTO
+        private static TaskItemDto ItemToDto(TaskItem taskItem) =>
+            new TaskItemDto
             {
-                Id = toDoItem.Id,
-                Name = toDoItem.Name,
-                IsComplete = toDoItem.IsComplete
+                Id = taskItem.Id,
+                Name = taskItem.Name,
+                IsComplete = taskItem.IsComplete
             };
     }
 }
