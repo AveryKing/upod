@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Input, Stack, Text} from "@chakra-ui/react";
 import login from "../services/login";
+import Logo from "./Logo";
 
 const LoginForm = ({setUser}) => {
     const [email, setEmail] = useState('');
@@ -24,7 +25,7 @@ const LoginForm = ({setUser}) => {
         <Stack textAlign='center'
                mt='25vh'
                spacing={5}>
-
+            <Logo />
             <Text
                 fontWeight='semibold'
                 fontSize='lg'>
