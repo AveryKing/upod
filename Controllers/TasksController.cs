@@ -25,11 +25,6 @@ namespace ToDoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<TaskItemDto>>> GetTodoItemsAsync()
         {
-            foreach (var x in HttpContext.User.Claims)
-            {
-                //   Console.WriteLine(x.Type +" " + x.Value);
-            }
-
             var tasks = await _tasksService.GetAsync();
             return tasks.Select(x => ItemToDto(x)).ToList();
         }
@@ -49,7 +44,6 @@ namespace ToDoApi.Controllers
         }
 
         // PUT: api/ToDo/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateToDoItemAsync(string id, TaskItemDto taskItemDto)
         {
@@ -73,7 +67,6 @@ namespace ToDoApi.Controllers
         }
 
         // POST: api/ToDo
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<TaskItemDto>> CreateToDoItemAsync(TaskItemDto taskItemDto)
         {
@@ -81,7 +74,7 @@ namespace ToDoApi.Controllers
             {
                 IsComplete = taskItemDto.IsComplete,
                 Name = taskItemDto.Name,
-                Owner = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value
+                Owner = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value
             };
 
             await _tasksService.CreateAsync(toDoItem);
