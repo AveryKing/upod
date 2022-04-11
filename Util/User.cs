@@ -9,4 +9,5 @@ public static class User
         var claim = httpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email);
         return claim!.Value;
     }
+    
 }
