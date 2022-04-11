@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Input, Stack, Text} from "@chakra-ui/react";
+import {Button, Flex, Input, Stack, Text} from "@chakra-ui/react";
 import login from "../services/login";
 import Logo from "./Logo";
 
@@ -22,8 +22,9 @@ const LoginForm = ({setUser}) => {
 
     };
     return (
+        <Flex justifyContent='center'>
         <Stack textAlign='center'
-               mt='25vh'
+               mt='20vh'
                spacing={5}>
             <Logo />
             <Text
@@ -55,6 +56,7 @@ const LoginForm = ({setUser}) => {
                 Don't yet have an account?
             </Button>
         </Stack>
+        </Flex>
     );
 };
 
