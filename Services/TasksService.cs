@@ -2,6 +2,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using ToDoApi.Models;
 using ToDoApi.Settings;
+
 namespace ToDoApi.Services;
 
 public class TasksService
@@ -14,30 +15,32 @@ public class TasksService
         var database = mongoClient.GetDatabase(tasksDatabaseSettings.Value.DatabaseName);
         _tasksCollection = database.GetCollection<TaskItem>(tasksDatabaseSettings.Value.TasksCollectionName);
     }
-    
-    public async Task<List<TaskItem>> GetAsync()
+
+    public async Task<List<TaskItem>> GetAsync(string userId)
     {
-        return await _tasksCollection.Find(_ => true).ToListAsync();
+        var filter = Builders<TaskItem>.Filter.Eq(t => t.Owner, userId);
+        return await _tasksCollection.Find(filter).ToListAsync();
     }
-     
-    public async Task<TaskItem?> GetAsync(string id)
+
+    public async Task<TaskItem?> GetAsync(string taskId, string userId)
     {
-        return await _tasksCollection.Find(task => task.Id == id).FirstOrDefaultAsync();
+        var filter = Builders<TaskItem>.Filter.Eq(t => t.Id, taskId)
+                     & Builders<TaskItem>.Filter.Eq(t => t.Owner, userId);
+        return await _tasksCollection.Find(filter).FirstOrDefaultAsync();
     }
-    
+
     public async Task CreateAsync(TaskItem task)
     {
         await _tasksCollection.InsertOneAsync(task);
     }
-    
+
     public async Task UpdateAsync(string id, TaskItem task)
     {
         await _tasksCollection.ReplaceOneAsync(item => item.Id == id, task);
     }
-    
+
     public async Task DeleteAsync(string id)
     {
         await _tasksCollection.DeleteOneAsync(item => item.Id == id);
     }
-    
 }

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using ToDoApi.Models;
 using ToDoApi.Services;
-
 namespace ToDoApi.Controllers
 {
     [Authorize]
@@ -25,7 +24,7 @@ namespace ToDoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<TaskItemDto>>> GetTodoItemsAsync()
         {
-            var tasks = await _tasksService.GetAsync();
+            var tasks = await _tasksService.GetAsync(Util.User.GetUserId(HttpContext));
             return tasks.Select(x => ItemToDto(x)).ToList();
         }
 
@@ -33,12 +32,7 @@ namespace ToDoApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskItemDto>> GetToDoItemAsync(string id)
         {
-            var toDoItem = await _tasksService.GetAsync(id);
-
-            if (toDoItem is null)
-            {
-                return NotFound();
-            }
+            var toDoItem = await _tasksService.GetAsync(id, Util.User.GetUserId(HttpContext));
 
             return ItemToDto(toDoItem);
         }
@@ -52,15 +46,11 @@ namespace ToDoApi.Controllers
                 return BadRequest();
             }
 
-            var toDoItem = await _tasksService.GetAsync(id);
-            if (toDoItem is null)
-            {
-                return NotFound();
-            }
+            var toDoItem = await _tasksService.GetAsync(id, Util.User.GetUserId(HttpContext));
 
+            if (toDoItem == null) return NoContent();
             toDoItem.Name = taskItemDto.Name;
             toDoItem.IsComplete = taskItemDto.IsComplete;
-
             await _tasksService.UpdateAsync(id, toDoItem);
 
             return NoContent();
@@ -89,10 +79,6 @@ namespace ToDoApi.Controllers
         public async Task<IActionResult> DeleteToDoItem(string id)
         {
             var toDoItem = await _tasksService.GetAsync(id);
-            if (toDoItem is null)
-            {
-                return NotFound();
-            }
 
             await _tasksService.DeleteAsync(id);
             return NoContent();
@@ -100,7 +86,7 @@ namespace ToDoApi.Controllers
 
         private async Task<bool> ToDoItemExistsAsync(string id)
         {
-            var tasks = await _tasksService.GetAsync();
+            var tasks = await _tasksService.GetAsync(id);
             return tasks.Any(x => x.Id == id);
         }
 
