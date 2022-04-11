@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { ChakraProvider, Flex} from "@chakra-ui/react";
 
 import LoginForm from "./components/LoginForm";
+import TaskList from "./components/TaskList";
 
 
 function App() {
@@ -12,7 +13,10 @@ function App() {
     return (
         <ChakraProvider>
             <Flex justifyContent='center'>
-                {!user && <LoginForm user={user} setUser={setUser} />}
+                {!user
+                    ? <LoginForm setUser={setUser} />
+                    : <TaskList user={user} />
+                }
             </Flex>
         </ChakraProvider>
 

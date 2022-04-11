@@ -1,4 +1,5 @@
 #nullable disable
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,11 @@ namespace ToDoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<TaskItemDto>>> GetTodoItemsAsync()
         {
+            foreach (var x in HttpContext.User.Claims)
+            {
+                //   Console.WriteLine(x.Type +" " + x.Value);
+            }
+
             var tasks = await _tasksService.GetAsync();
             return tasks.Select(x => ItemToDto(x)).ToList();
         }
@@ -74,13 +80,14 @@ namespace ToDoApi.Controllers
             var toDoItem = new TaskItem
             {
                 IsComplete = taskItemDto.IsComplete,
-                Name = taskItemDto.Name
+                Name = taskItemDto.Name,
+                Owner = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email).Value
             };
 
-          await _tasksService.CreateAsync(toDoItem);
+            await _tasksService.CreateAsync(toDoItem);
 
-          // ReSharper disable once Mvc.ActionNotResolved
-          return CreatedAtAction(nameof(GetToDoItemAsync),
+            // ReSharper disable once Mvc.ActionNotResolved
+            return CreatedAtAction(nameof(GetToDoItemAsync),
                 new {id = toDoItem.Id}, ItemToDto(toDoItem));
         }
 
@@ -109,7 +116,8 @@ namespace ToDoApi.Controllers
             {
                 Id = taskItem.Id,
                 Name = taskItem.Name,
-                IsComplete = taskItem.IsComplete
+                IsComplete = taskItem.IsComplete,
+                Owner = taskItem.Owner
             };
     }
 }

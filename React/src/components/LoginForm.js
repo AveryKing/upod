@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Button, Input, Stack, Text} from "@chakra-ui/react";
 import login from "../services/login";
 
-const LoginForm = ({user,setUser}) => {
+const LoginForm = ({setUser}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
