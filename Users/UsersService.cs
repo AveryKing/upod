@@ -4,11 +4,11 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
-using ToDoApi.Models;
 using ToDoApi.Settings;
+using ToDoApi.Users.Models;
 using static System.DateTime;
 
-namespace ToDoApi.Services;
+namespace ToDoApi.Users;
 
 public class UsersService
 {

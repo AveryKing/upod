@@ -1,7 +1,4 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
-namespace ToDoApi.Models;
+namespace ToDoApi.Users.Models;
 
 public class UserDto
 {

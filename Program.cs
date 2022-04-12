@@ -1,9 +1,9 @@
 using System.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using ToDoApi.Models;
-using ToDoApi.Services;
 using ToDoApi.Settings;
+using ToDoApi.Tasks;
+using ToDoApi.Users;
 using static System.Text.Encoding;
 
 var myAllowSpecificOrigins = "myAllowSpecificOrigins";

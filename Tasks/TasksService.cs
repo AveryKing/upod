@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using ToDoApi.Models;
 using ToDoApi.Settings;
+using ToDoApi.Tasks.Models;
 
-namespace ToDoApi.Services;
+namespace ToDoApi.Tasks;
 
 public class TasksService
 {

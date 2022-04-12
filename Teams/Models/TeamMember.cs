@@ -1,7 +1,8 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using ToDoApi.Users.Models;
 
-namespace ToDoApi.Models;
+namespace ToDoApi.Teams.Models;
 
 public class TeamMember : User
 {

@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using ToDoApi.Models;
-using ToDoApi.Services;
+using ToDoApi.Users.Models;
 
-namespace ToDoApi.Controllers;
+namespace ToDoApi.Users;
 
     
     [Route("api/[controller]")]
