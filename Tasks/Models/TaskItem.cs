@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace ToDoApi.Models;
+namespace ToDoApi.Tasks.Models;
 
 public class TaskItem
 {

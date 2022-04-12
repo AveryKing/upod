@@ -3,10 +3,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using ToDoApi.Models;
-using ToDoApi.Services;
+using ToDoApi.Tasks.Models;
 
-namespace ToDoApi.Controllers
+namespace ToDoApi.Tasks
 {
     [Authorize]
     [EnableCors("myAllowSpecificOrigins")]

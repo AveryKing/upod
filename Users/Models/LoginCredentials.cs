@@ -1,4 +1,4 @@
-namespace ToDoApi.Models;
+namespace ToDoApi.Users.Models;
 
 public struct LoginCredentials
 {

@@ -1,4 +1,4 @@
-namespace ToDoApi.Controllers;
+namespace ToDoApi.Teams;
 
 public class TeamsController
 {

@@ -1,4 +1,4 @@
-namespace ToDoApi.Services;
+namespace ToDoApi.Teams;
 
 public class TeamsService
 {

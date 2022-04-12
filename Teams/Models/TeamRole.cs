@@ -1,4 +1,4 @@
-namespace ToDoApi.Models;
+namespace ToDoApi.Teams.Models;
 
 public enum TeamRole
 {
