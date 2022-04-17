@@ -9,8 +9,6 @@ import Navbar from "./components/Navbar";
 function App() {
     const [user, setUser] = useState(null);
 
-
-
     return (
         <ChakraProvider>
 
